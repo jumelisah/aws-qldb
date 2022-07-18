@@ -118,7 +118,10 @@ async function getLicenceRecordByEmail(txn, email, logger) {
   return txn.execute(query, email);
 }
 
-
+const getAllData = async(txn, logger)=>{
+  logger.debug('In getLicenceRecordByEmail function');
+  return txn.execute('SELECT * FROM Student AS b')
+}
 /**
  * Helper function to get the latest revision of document by document Id
  * @param txn The {@linkcode TransactionExecutor} for lambda execute.
@@ -172,21 +175,17 @@ async function addContactUpdatedEvent(txn, telephone, address, event, email, log
  */
 const getAllStudent = async(logger) => {
   logger.debug('Get all student data');
-  let student;
+  let student = {greet: "halo"};
   const qldbDriver = await getQldbDriver();
   await qldbDriver.executeLambda(async (txn) => {
-    // Get the current record
+    const id ="6LtwKJ9Y8ks2bY3bEhUayZ";
+    student = JSON.stringify(txn.execute('SELECT * FROM Student AS b WHERE b.studentId=?', id));
 
-    const result = await getLicenceRecordById(txn, data.studentId, logger);
-    const resultList = result.getResultList();
-    const statement = 'SELECT * FROM Student';
-    student = JSON.stringify(txn.execute(statement));
-
-    if (student.length === 0) {
-      throw new LicenceIntegrityError(400, 'Student Integrity Error', `Student record does not exist`);
-    }
+    // if (student.length === 0) {
+    //   throw new LicenceNotFoundError(400, 'Licence Not Found Error', `Student record does not exist`);
+    // }
   }, () => logger.info('Retrying due to OCC conflict...'));
-  return student
+  return student;
 }
 const updateStudentData = async(data, logger) => {
   logger.debug(`In updateStudentData function with studentId ${data.studentId}`);

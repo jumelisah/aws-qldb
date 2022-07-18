@@ -16,16 +16,15 @@ const metrics = new Metrics();
 tracer.captureAWS(require('aws-sdk'));
 
 const handler = async (event) => {
-  const { studentId } = event.pathParameters;
-  logger.debug(`In the get-licence handler with studentId ${studentId}`);
+  logger.debug(`In the get-all-student data`);
 
   try {
-    const response = await getAllStudent;
-    const licence = JSON.parse(response);
+    const response = await getAllStudent(logger);
+    const student = JSON.parse(response);
 
     return {
       statusCode: 200,
-      body: JSON.stringify(licence),
+      body: JSON.stringify(student),
     };
   } catch (error) {
     if (error instanceof LicenceNotFoundError) {

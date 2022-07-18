@@ -95,6 +95,24 @@ functions:
           path: /student/{studentId}
           method: post
   
+  getAllStudent:
+    name: get-all-student-${self:provider.stage}
+    handler: functions/get-all-student.handler
+    environment:
+      POWERTOOLS_SERVICE_NAME: getAllStudent
+    iamRoleStatementsInherit: true
+    iamRoleStatementsName: student-data-getAllStudent
+    iamRoleStatements:
+      - Effect: Allow
+        Action: 
+          - qldb:PartiQLSelect
+        Resource: 
+          - "arn:aws:qldb:#{AWS::Region}:#{AWS::AccountId}:ledger/student-data-${self:provider.stage}/*"
+    events:
+      - http:
+          path: /allstudent
+          method: post
+  
   # updateContact:
   #   name: update-contact-${self:provider.stage}
   #   handler: functions/update-contact.handler
